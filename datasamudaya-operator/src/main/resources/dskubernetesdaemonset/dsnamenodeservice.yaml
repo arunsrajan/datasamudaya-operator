@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode
+  labels:
+    app: hadoop-hdfs-namenode
+spec:
+  selector:
+    app: hadoop-hdfs-namenode
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      name: namenode-ui
+      port: 9870
+      targetPort: 9870
+    - protocol: TCP
+      name: namenode-protocol
+      port: 9000
+      targetPort: 9000
