@@ -32,7 +32,7 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
 
     public UpdateControl<DatasamudayaOperatorCustomResource> reconcile(DatasamudayaOperatorCustomResource primary,
                                                      Context<DatasamudayaOperatorCustomResource> context) {
-        return UpdateControl.patchStatus(primary);    
+        return UpdateControl.updateResource(primary);
     }
     
     @Override

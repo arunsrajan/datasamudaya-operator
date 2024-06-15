@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datasamudaya-operator
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: datasamudaya-operator
+  replicas: 1 # we always run a single replica of the operator to avoid duplicate handling of events
+  strategy:
+    type: Recreate # during an upgrade the operator will shut down before the new version comes up to prevent two instances running at the same time
+  template:
+    metadata:
+      labels:
+        app: datasamudaya-operator
+    spec:
+      serviceAccountName: datasamudaya-operator # specify the ServiceAccount under which's RBAC persmissions the operator will be executed under
+      containers:
+      - name: operator
+        image: arunsrajan/datasamudaya-operator:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /health # when this returns 200 the operator is considered up and running
+            port: 8080
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          httpGet:
+            path: /health # when this endpoint doesn't return 200 the operator is considered broken and get's restarted
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: datasamudaya-operator
+  namespace: default
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: datasamudaya-operator
+rules:
+- apiGroups:
+  - com.github.datasamudaya.operator
+  resources:
+  - datasamudayaoperatorcustomresources
+  verbs:
+  - "*"
+- apiGroups:
+  - com.github.datasamudaya.operator
+  resources:
+  - datasamudayaoperatorcustomresources/status
+  verbs:
+  - "*"
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - "get"
+  - "list"
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: datasamudaya-operator
+subjects:
+- kind: ServiceAccount
+  name: datasamudaya-operator
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: datasamudaya-operator
+  apiGroup: ""

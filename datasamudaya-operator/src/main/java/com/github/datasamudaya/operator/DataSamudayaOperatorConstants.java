@@ -41,7 +41,7 @@ public class DataSamudayaOperatorConstants {
 	 
 	 
 	 public static final String CONTAINERMETADATANAME = "datasamudayacontainer";
-	 public static final String CONTAINERYAMLPATH = "/dskubernetesdaemonset/dsstandalonestatefulset.yaml";
+	 public static final String CONTAINERYAMLPATH = "/dskubernetesdaemonset/dscontainerstatefulset.yaml";
 	 public static final String CONTAINERIMAGE = "arunsrajan/datasamudayacontainer:latest";
 	 
 	 public static final String ZKMETADATANAME = "datasamudayazk";
@@ -51,5 +51,7 @@ public class DataSamudayaOperatorConstants {
 	
 	 public static final String STATEFULSET_MAP_EVENT_SOURCE = "StatefulSetMapEventSource";
 	 public static final String SERVICE_MAP_EVENT_SOURCE = "ServiceMapEventSource";
+	 
+	 public static final String EMPTYSTRING = "";
 	 
 }

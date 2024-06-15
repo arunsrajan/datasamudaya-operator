@@ -1,53 +1,76 @@
 package com.github.datasamudaya.operator;
 
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.*;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERIMAGE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERLIMITCPU_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERLIMITMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERREQUESTCPU_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERREQUESTMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CONTAINERYAMLPATH;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.PODCIDRNODEMAPPINGENABLED_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKHOSTPORT_DEFAULT;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.core.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
+import io.javaoperatorsdk.operator.api.reconciler.dependent.Deleter;
+import io.javaoperatorsdk.operator.processing.dependent.Creator;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 
 @KubernetesDependent(resourceDiscriminator = ContainerStatefulSetDiscriminator.class)
 public class ContainerStatefulSetDependentResource
-        extends CRUDKubernetesDependentResource<StatefulSet, DatasamudayaOperatorCustomResource> {   
+        extends CRUDKubernetesDependentResource<StatefulSet, DatasamudayaOperatorCustomResource> 
+		implements Creator<StatefulSet, DatasamudayaOperatorCustomResource>, Deleter<DatasamudayaOperatorCustomResource>{   
 
-    public ContainerStatefulSetDependentResource() {
-        super(StatefulSet.class);
-
-    }
+	private String containerYaml = "";
+	private static final Logger log = LoggerFactory.getLogger(ContainerStatefulSetDependentResource.class);
+	public ContainerStatefulSetDependentResource() {
+		super(StatefulSet.class);
+		this.containerYaml = Utils.readResource(CONTAINERYAMLPATH);
+		log.error("Container StatefulSet Yaml:\n {}", containerYaml);
+	}
+	
     @Override
     protected StatefulSet desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
-        try {
-			StatefulSet containerStatefulSetYaml = context.getClient().apps().statefulSets().load(IOUtils.toString(new InputStreamReader(
-					getClass().
-					getResourceAsStream(CONTAINERYAMLPATH)))).item();
-			Container container = containerStatefulSetYaml.getSpec().getTemplate().getSpec().getContainers().get(0);
-			container.setImage(nonNull(primary.getSpec().getContainerimage())?primary.getSpec().getContainerimage():CONTAINERIMAGE);
-			Map<String, Quantity> limits = new HashMap<>();
-			limits.put(CPU, nonNull(primary.getSpec().getContainerlimitcpu())?Quantity.parse(primary.getSpec().getContainerlimitcpu()):Quantity.parse(CONTAINERLIMITCPU_DEFAULT));
-			limits.put(MEMORY, nonNull(primary.getSpec().getContainerlimitmemory())?Quantity.parse(primary.getSpec().getContainerlimitmemory()):Quantity.parse(CONTAINERLIMITMEMORY_DEFAULT));
-			Map<String, Quantity> requests = new HashMap<>();
-			limits.put(CPU, nonNull(primary.getSpec().getContainerrequestcpu())?Quantity.parse(primary.getSpec().getContainerrequestcpu()):Quantity.parse(CONTAINERREQUESTCPU_DEFAULT));
-			limits.put(MEMORY, nonNull(primary.getSpec().getContainerrequestmemory())?Quantity.parse(primary.getSpec().getContainerrequestmemory()):Quantity.parse(CONTAINERREQUESTMEMORY_DEFAULT));
-			container.getResources().setLimits(requests);
-			container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
-			container.getEnv().get(1).setValue(nonNull(primary.getSpec().getZkhostport())?primary.getSpec().getZkhostport():ZKHOSTPORT_DEFAULT);
-			return containerStatefulSetYaml;
-			
-		} catch (IOException e) {
-			
-		}
-		return null;        
+        StatefulSet containerStatefulSet = context.getClient().apps().statefulSets().load(new ByteArrayInputStream(containerYaml.getBytes())).item();
+		Container container = containerStatefulSet.getSpec().getTemplate().getSpec().getContainers().get(0);
+		container.setImage(nonNull(primary.getSpec().getContainerimage())?primary.getSpec().getContainerimage():CONTAINERIMAGE);
+		Map<String, Quantity> limits = new HashMap<>();
+		limits.put(CPU, nonNull(primary.getSpec().getContainerlimitcpu())?Quantity.parse(primary.getSpec().getContainerlimitcpu()):Quantity.parse(CONTAINERLIMITCPU_DEFAULT));
+		limits.put(MEMORY, nonNull(primary.getSpec().getContainerlimitmemory())?Quantity.parse(primary.getSpec().getContainerlimitmemory()):Quantity.parse(CONTAINERLIMITMEMORY_DEFAULT));
+		Map<String, Quantity> requests = new HashMap<>();
+		limits.put(CPU, nonNull(primary.getSpec().getContainerrequestcpu())?Quantity.parse(primary.getSpec().getContainerrequestcpu()):Quantity.parse(CONTAINERREQUESTCPU_DEFAULT));
+		limits.put(MEMORY, nonNull(primary.getSpec().getContainerrequestmemory())?Quantity.parse(primary.getSpec().getContainerrequestmemory()):Quantity.parse(CONTAINERREQUESTMEMORY_DEFAULT));
+		container.getResources().setLimits(requests);
+		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
+		container.getEnv().get(1).setValue(nonNull(primary.getSpec().getZkhostport())?primary.getSpec().getZkhostport():ZKHOSTPORT_DEFAULT);
+		return containerStatefulSet;
+    }
+    
+    @Override
+    public StatefulSet create(StatefulSet target, DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
+    	if(isNull(target)) {
+    		return desired(primary, context);
+    	}
+		return target;    	
+    }
+    @Override
+    public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
+
+		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
+				.withName(DataSamudayaOperatorConstants.CONTAINERMETADATANAME).delete();
     }
 }

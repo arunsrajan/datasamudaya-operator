@@ -19,7 +19,7 @@
 		<junit.version>5.9.2</junit.version>
 		<log4j.version>2.20.0</log4j.version>
 		<fabric8-client.version>6.12.1</fabric8-client.version>
-		<jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
+		<jib-maven-plugin.version>3.2.0</jib-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -92,33 +92,63 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<plugins>			
+		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.4.2</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>com.github.datasamudaya.operator.Runner</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
+						<id>builddatasamudayaoperator</id>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>dockerBuild</goal>
 						</goals>
+						<configuration>
+							<from>
+								<image>openjdk:21</image>
+							</from>
+							<to>
+								<image>arunsrajan/datasamudaya-operator</image>
+								<tags>
+									<tag>latest</tag>
+								</tags>
+							</to>
+							<extraDirectories>
+								<paths>
+									<path>
+										<from>target</from>
+										<into>/opt/datasamudaya</into>
+										<includes>
+											datasamudaya-operator-0.1.0-SNAPSHOT-jar-with-dependencies.jar
+										</includes>
+									</path>
+									<path>
+										<from>scripts</from>
+										<into>/</into>
+										<includes>entry.sh</includes>
+									</path>
+								</paths>
+								<permissions>
+									<permission>
+										<file>/opt/datasamudaya/*</file>
+										<mode>777</mode>
+									</permission>
+									<permission>
+										<file>/entry.sh</file>
+										<mode>777</mode>
+									</permission>
+								</permissions>
+							</extraDirectories>
+							<container>
+								<entrypoint>
+									<arg>bash</arg>
+									<arg>-ex</arg>
+									<arg>/entry.sh</arg>
+								</entrypoint>
+								<format>Docker</format>
+							</container>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
