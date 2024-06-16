@@ -4,6 +4,7 @@ metadata:
   name: datasamudayazk
   labels:
     app: datasamudayazk
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -23,7 +24,12 @@ spec:
                 cpu: "1"
               limits:
                 memory: "1024Mi"
-                cpu: "1"          
+                cpu: "1"
+          env:
+            - name: PODCIDRNODEMAPPINGENABLED
+              value: "true"
+            - name: DATASAMUDAYA_HOME
+              value: /opt/datasamudaya
           ports:
             - containerPort: 2181
               name: zkport

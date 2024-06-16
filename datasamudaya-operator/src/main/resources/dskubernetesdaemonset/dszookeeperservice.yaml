@@ -4,6 +4,7 @@ metadata:
   name: zoo
   labels:
     app: datasamudayazk
+  namespace: default
 spec:
   type: ClusterIP
   clusterIP: None

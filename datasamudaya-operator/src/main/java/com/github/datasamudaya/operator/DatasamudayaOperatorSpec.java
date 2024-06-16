@@ -183,5 +183,17 @@ public class DatasamudayaOperatorSpec {
 	public void setContainerlimitmemory(String containerlimitmemory) {
 		this.containerlimitmemory = containerlimitmemory;
 	}
+
+	@Override
+	public String toString() {
+		return "DatasamudayaOperatorSpec [namespace=" + namespace + ", numberofworkers=" + numberofworkers
+				+ ", zkimage=" + zkimage + ", zkrequestcpu=" + zkrequestcpu + ", zkrequestmemory=" + zkrequestmemory
+				+ ", zklimitcpu=" + zklimitcpu + ", zklimitmemory=" + zklimitmemory + ", podcidrnodemappingenabled="
+				+ podcidrnodemappingenabled + ", zkhostport=" + zkhostport + ", saimage=" + saimage + ", sarequestcpu="
+				+ sarequestcpu + ", sarequestmemory=" + sarequestmemory + ", salimitcpu=" + salimitcpu
+				+ ", salimitmemory=" + salimitmemory + ", containerimage=" + containerimage + ", containerrequestcpu="
+				+ containerrequestcpu + ", containerrequestmemory=" + containerrequestmemory + ", containerlimitcpu="
+				+ containerlimitcpu + ", containerlimitmemory=" + containerlimitmemory + "]";
+	}
 	
 }

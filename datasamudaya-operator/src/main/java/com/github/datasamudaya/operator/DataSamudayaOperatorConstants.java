@@ -19,7 +19,7 @@ public class DataSamudayaOperatorConstants {
 	 public static final String CONTAINERLIMITMEMORY_DEFAULT = "1024Mi";
 	 public static final String CONTAINERLIMITCPU_DEFAULT = "1";
 
-	 public static final String ZKIMAGE = "zkimage";
+	 public static final String ZKIMAGE = "arunsrajan/datasamudayazk:latest";
 	 public static final String ZKREQUESTCPU = "zkrequestcpu";
 	 public static final String ZKREQUESTCPU_DEFAULT = "1";
 	 public static final String ZKREQUESTMEMORY = "zkrequestmemory";

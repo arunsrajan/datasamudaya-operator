@@ -4,6 +4,7 @@ metadata:
   name: namenode
   labels:
     app: hadoop-hdfs-namenode
+  namespace: default
 spec:
   selector:
     app: hadoop-hdfs-namenode

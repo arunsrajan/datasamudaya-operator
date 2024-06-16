@@ -55,8 +55,9 @@ public class ContainerStatefulSetDependentResource
 		limits.put(CPU, nonNull(primary.getSpec().getContainerrequestcpu())?Quantity.parse(primary.getSpec().getContainerrequestcpu()):Quantity.parse(CONTAINERREQUESTCPU_DEFAULT));
 		limits.put(MEMORY, nonNull(primary.getSpec().getContainerrequestmemory())?Quantity.parse(primary.getSpec().getContainerrequestmemory()):Quantity.parse(CONTAINERREQUESTMEMORY_DEFAULT));
 		container.getResources().setLimits(requests);
+		containerStatefulSet.getSpec().setReplicas(primary.getSpec().getNumberofworkers()>1?primary.getSpec().getNumberofworkers():1);
 		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
-		container.getEnv().get(1).setValue(nonNull(primary.getSpec().getZkhostport())?primary.getSpec().getZkhostport():ZKHOSTPORT_DEFAULT);
+		container.getEnv().get(4).setValue(nonNull(primary.getSpec().getZkhostport())?primary.getSpec().getZkhostport():ZKHOSTPORT_DEFAULT);
 		return containerStatefulSet;
     }
     

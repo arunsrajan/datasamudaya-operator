@@ -10,4 +10,10 @@ import io.fabric8.kubernetes.model.annotation.Version;
 public class DatasamudayaOperatorCustomResource extends CustomResource<DatasamudayaOperatorSpec,DatasamudayaOperatorStatus> implements Namespaced {
 
 	private static final long serialVersionUID = -5336254074827204904L;
+	
+	@Override
+	public String toString() {
+		return "DatasamudayaOperatorCustomResource [spec=" + spec + ", status=" + status + "]";
+	}
+	
 }

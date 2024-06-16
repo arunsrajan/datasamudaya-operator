@@ -4,6 +4,7 @@ metadata:
   name: datasamudayacontainer
   labels:
     app: datasamudayacontainer
+  namespace: default
 spec:
   replicas: 1
   selector:

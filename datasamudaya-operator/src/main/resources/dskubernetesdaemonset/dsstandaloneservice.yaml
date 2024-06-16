@@ -4,6 +4,7 @@ metadata:
   name: datasamudayastandalone
   labels:
     app: datasamudayastandalone
+  namespace: default
 spec:
   type: NodePort
   selector:
