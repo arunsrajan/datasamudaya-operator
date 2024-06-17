@@ -1,7 +1,6 @@
 package com.github.datasamudaya.operator;
 
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.INDEX;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 
 import java.util.Optional;
@@ -20,7 +19,7 @@ public class StandaloneStatefulSetDiscriminator implements ResourceDiscriminator
 		InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource> ies =
 		        (InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource>) context
 		            .eventSourceRetriever().getResourceEventSourceFor(StatefulSet.class);		
-		    return ies.get(new ResourceID(resource.getMetadata().getName()+HYPHEN+STANDALONE+HYPHEN+INDEX,
+		    return ies.get(new ResourceID(resource.getMetadata().getName()+HYPHEN+STANDALONE,
 		    		resource.getMetadata().getNamespace()));
 	}
 

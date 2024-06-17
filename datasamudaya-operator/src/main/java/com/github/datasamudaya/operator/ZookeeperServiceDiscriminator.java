@@ -6,7 +6,6 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOO
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.ResourceDiscriminator;
 import io.javaoperatorsdk.operator.processing.event.ResourceID;

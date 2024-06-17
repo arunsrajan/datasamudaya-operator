@@ -56,6 +56,6 @@ public class StandaloneServiceDependentResource
     public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
 
 		context.getClient().services().inNamespace(primary.getMetadata().getNamespace())
-				.withName(DataSamudayaOperatorConstants.SASERVICEMETADATANAME).delete();
+				.withName(primary.getMetadata().getName()+HYPHEN+STANDALONE).delete();
     }
 }

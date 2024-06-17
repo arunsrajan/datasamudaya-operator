@@ -57,6 +57,6 @@ implements Creator<Service, DatasamudayaOperatorCustomResource>, Deleter<Datasam
     public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
 
 		context.getClient().services().inNamespace(primary.getMetadata().getNamespace())
-				.withName(DataSamudayaOperatorConstants.ZKSERVICEMETADATANAME).delete();
+				.withName(primary.getMetadata().getName() + HYPHEN + ZOOKEEPER).delete();
     }
 }

@@ -86,6 +86,6 @@ public class ContainerStatefulSetDependentResource
     public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
 
 		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
-				.withName(DataSamudayaOperatorConstants.CONTAINERMETADATANAME).delete();
+				.withName(primary.getMetadata().getName()+HYPHEN+WORKER).delete();
     }
 }

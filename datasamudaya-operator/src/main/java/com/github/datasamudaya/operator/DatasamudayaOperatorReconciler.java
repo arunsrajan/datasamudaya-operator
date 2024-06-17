@@ -1,7 +1,11 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICE_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STATEFULSET_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.WORKER;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 
 import java.util.Map;
 import java.util.Optional;
@@ -14,8 +18,10 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.client.dsl.Replaceable;
 import io.javaoperatorsdk.operator.api.config.informer.InformerConfiguration;
+import io.javaoperatorsdk.operator.api.reconciler.Cleaner;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.ControllerConfiguration;
+import io.javaoperatorsdk.operator.api.reconciler.DeleteControl;
 import io.javaoperatorsdk.operator.api.reconciler.EventSourceContext;
 import io.javaoperatorsdk.operator.api.reconciler.EventSourceInitializer;
 import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
@@ -37,7 +43,8 @@ import io.javaoperatorsdk.operator.processing.event.source.informer.InformerEven
 										@Dependent(type = ZookeeperServiceDependentResource.class,
 										useEventSourceWithName = SERVICE_MAP_EVENT_SOURCE)})
 public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOperatorCustomResource>
-														,EventSourceInitializer<DatasamudayaOperatorCustomResource>{
+														,EventSourceInitializer<DatasamudayaOperatorCustomResource>
+														, Cleaner<DatasamudayaOperatorCustomResource>{
 
 	private static final Logger log = LoggerFactory.getLogger(DatasamudayaOperatorReconciler.class);
 	
@@ -84,7 +91,7 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
     		log.info("StatefulSet Updated: {}", primary);
     	}
     	
-    	if(isServiceCreated || isStatefulSetCreated || isServiceUpdated || isStatefulSetUpdated) {
+    	if(isServiceCreated || isStatefulSetCreated) {
     		return UpdateControl.patchStatus(primary);
     	}
     	
@@ -104,4 +111,20 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
 
       return Map.of(STATEFULSET_MAP_EVENT_SOURCE, ssies, SERVICE_MAP_EVENT_SOURCE, svcies);
     }
+
+	@Override
+	public DeleteControl cleanup(DatasamudayaOperatorCustomResource primary,
+			Context<DatasamudayaOperatorCustomResource> context) {
+		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName()+HYPHEN+WORKER).delete();
+		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName()+HYPHEN+STANDALONE).delete();
+		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName()+HYPHEN+ZOOKEEPER).delete();
+		context.getClient().services().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName()+HYPHEN+STANDALONE).delete();
+		context.getClient().services().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName() + HYPHEN + ZOOKEEPER).delete();
+		return DeleteControl.defaultDelete();
+	}
 }

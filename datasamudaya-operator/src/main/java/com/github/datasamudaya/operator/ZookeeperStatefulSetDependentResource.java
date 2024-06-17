@@ -77,6 +77,6 @@ public class ZookeeperStatefulSetDependentResource
     public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
 
 		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
-				.withName(DataSamudayaOperatorConstants.ZKMETADATANAME).delete();
+				.withName(primary.getMetadata().getName()+HYPHEN+ZOOKEEPER).delete();
     }
 }

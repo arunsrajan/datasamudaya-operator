@@ -13,6 +13,8 @@ To build datasamudaya operator.
 --------------------------------
 mvn -f pomjar.xml compile jib:dockerBuild@builddatasamudayaoperator
 
+docker push arunsrajan/datasamudaya-operator
+
 To create hadoop daemonset.
 --------------------------
 kubectl label nodes datasamudayadaemons-m02 namenode=true

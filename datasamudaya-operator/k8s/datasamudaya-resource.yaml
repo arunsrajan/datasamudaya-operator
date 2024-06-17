@@ -4,5 +4,5 @@ metadata:
   name: dsamudaya
 spec:
   podcidrnodemappingenabled: "true"
-  numberofworkers: 1
+  numberofworkers: 2
   

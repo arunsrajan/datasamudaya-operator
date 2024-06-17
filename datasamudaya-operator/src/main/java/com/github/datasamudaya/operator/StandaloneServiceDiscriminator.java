@@ -1,7 +1,6 @@
 package com.github.datasamudaya.operator;
 
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.INDEX;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 
 import java.util.Optional;

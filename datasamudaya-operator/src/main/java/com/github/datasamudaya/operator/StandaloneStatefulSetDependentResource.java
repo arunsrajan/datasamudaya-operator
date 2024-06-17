@@ -10,10 +10,9 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAL
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAREQUESTCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAREQUESTMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEYAMLPATH;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKHOSTPORT_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKPORT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 import static java.util.Objects.isNull;
@@ -83,6 +82,6 @@ public class StandaloneStatefulSetDependentResource
     public void delete(DatasamudayaOperatorCustomResource primary, Context<DatasamudayaOperatorCustomResource> context) {
 
 		context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace())
-				.withName(DataSamudayaOperatorConstants.SAMETADATANAME).delete();
+				.withName(primary.getMetadata().getName()+HYPHEN+STANDALONE).delete();
     }
 }
