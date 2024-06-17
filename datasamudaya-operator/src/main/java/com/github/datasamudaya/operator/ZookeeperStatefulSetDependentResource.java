@@ -1,12 +1,15 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKLIMITCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKLIMITMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKREQUESTCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKREQUESTMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPERYAMLPATH;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -43,6 +46,15 @@ public class ZookeeperStatefulSetDependentResource
     protected StatefulSet desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
         StatefulSet zookeeperStatefulSet = context.getClient().apps().statefulSets().load(new ByteArrayInputStream(zkstatefulsetYaml.getBytes())).item();
+        String primaryName = primary.getMetadata().getName()+HYPHEN;
+        zookeeperStatefulSet.getMetadata().setName(primaryName+ZOOKEEPER);
+        zookeeperStatefulSet.getMetadata().setNamespace(primary.getMetadata().getNamespace());
+        Map<String,String> labels = zookeeperStatefulSet.getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+ZOOKEEPER);
+        labels = zookeeperStatefulSet.getSpec().getSelector().getMatchLabels();
+        labels.put(APPLICATION, primaryName+ZOOKEEPER);
+        labels = zookeeperStatefulSet.getSpec().getTemplate().getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+ZOOKEEPER);
 		Container zookeeper = zookeeperStatefulSet.getSpec().getTemplate().getSpec().getContainers().get(0);
 		zookeeper.setImage(nonNull(primary.getSpec().getZkimage())?primary.getSpec().getZkimage():ZKIMAGE);
 		Map<String, Quantity> limits = new HashMap<>();

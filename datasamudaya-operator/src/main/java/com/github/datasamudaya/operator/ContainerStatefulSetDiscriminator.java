@@ -1,5 +1,9 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.INDEX;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.WORKER;
+
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
@@ -15,8 +19,8 @@ public class ContainerStatefulSetDiscriminator implements ResourceDiscriminator<
 			Context<DatasamudayaOperatorCustomResource> context) {
 		InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource> ies =
 		        (InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource>) context
-		            .eventSourceRetriever().getResourceEventSourceFor(StatefulSet.class);		
-		    return ies.get(new ResourceID(DataSamudayaOperatorConstants.CONTAINERMETADATANAME,
+		            .eventSourceRetriever().getResourceEventSourceFor(StatefulSet.class);
+		    return ies.get(new ResourceID(resource.getMetadata().getName()+HYPHEN+WORKER+HYPHEN+INDEX,
 		    		resource.getMetadata().getNamespace()));
 	}
 

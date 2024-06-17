@@ -1,5 +1,8 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
+
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
@@ -16,7 +19,7 @@ public class ZookeeperStatefulSetDiscriminator implements ResourceDiscriminator<
 		InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource> ies =
 		        (InformerEventSource<StatefulSet, DatasamudayaOperatorCustomResource>) context
 		            .eventSourceRetriever().getResourceEventSourceFor(StatefulSet.class);		
-		    return ies.get(new ResourceID(DataSamudayaOperatorConstants.ZKMETADATANAME,
+		    return ies.get(new ResourceID(resource.getMetadata().getName()+HYPHEN+ZOOKEEPER,
 		    		resource.getMetadata().getNamespace()));
 	}
 

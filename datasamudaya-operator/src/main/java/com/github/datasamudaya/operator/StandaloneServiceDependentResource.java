@@ -1,9 +1,13 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONESERVICEYAMLPATH;
 import static java.util.Objects.isNull;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +34,14 @@ public class StandaloneServiceDependentResource
     @Override
     protected Service desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
+    	String primaryName = primary.getMetadata().getName()+HYPHEN;
         Service standaloneService = context.getClient().services().load(new ByteArrayInputStream(standaloneServiceYaml.getBytes())).item();
+        standaloneService.getMetadata().setName(primaryName+STANDALONE);
+        standaloneService.getMetadata().setNamespace(primary.getMetadata().getNamespace());
+        Map<String, String> labels = standaloneService.getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+STANDALONE);
+        labels = standaloneService.getSpec().getSelector();
+        labels.put(APPLICATION, primaryName+STANDALONE);
 		return standaloneService;
     }
     

@@ -1,6 +1,9 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.COLON;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.PODCIDRNODEMAPPINGENABLED_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITCPU_DEFAULT;
@@ -9,7 +12,10 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAR
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAREQUESTMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEYAMLPATH;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKHOSTPORT_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKPORT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -44,6 +50,15 @@ public class StandaloneStatefulSetDependentResource
     protected StatefulSet desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
         StatefulSet standaloneStatefulSet = context.getClient().apps().statefulSets().load(new ByteArrayInputStream(standaloneYaml.getBytes())).item();
+        String primaryName = primary.getMetadata().getName()+HYPHEN;
+        standaloneStatefulSet.getMetadata().setName(primaryName+STANDALONE);
+        standaloneStatefulSet.getMetadata().setNamespace(primary.getMetadata().getNamespace());
+        Map<String,String> labels = standaloneStatefulSet.getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+STANDALONE);
+        labels = standaloneStatefulSet.getSpec().getSelector().getMatchLabels();
+        labels.put(APPLICATION, primaryName+STANDALONE);
+        labels = standaloneStatefulSet.getSpec().getTemplate().getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+STANDALONE);
 		Container container = standaloneStatefulSet.getSpec().getTemplate().getSpec().getContainers().get(0);
 		container.setImage(nonNull(primary.getSpec().getSaimage())?primary.getSpec().getSaimage():STANDALONEIMAGE);
 		Map<String, Quantity> limits = new HashMap<>();
@@ -54,7 +69,7 @@ public class StandaloneStatefulSetDependentResource
 		limits.put(MEMORY, nonNull(primary.getSpec().getSarequestmemory())?Quantity.parse(primary.getSpec().getSarequestmemory()):Quantity.parse(SAREQUESTMEMORY_DEFAULT));
 		container.getResources().setLimits(requests);
 		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
-		container.getEnv().get(4).setValue(nonNull(primary.getSpec().getZkhostport())?primary.getSpec().getZkhostport():ZKHOSTPORT_DEFAULT);
+		container.getEnv().get(2).setValue(primaryName+ZOOKEEPER+COLON+ZKPORT);
 		return standaloneStatefulSet;
     }
     @Override

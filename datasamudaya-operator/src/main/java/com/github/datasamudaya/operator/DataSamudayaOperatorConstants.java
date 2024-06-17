@@ -46,6 +46,7 @@ public class DataSamudayaOperatorConstants {
 	 
 	 public static final String ZKMETADATANAME = "datasamudayazk";
 	 public static final String ZKSERVICEMETADATANAME = "zoo";
+	 public static final String ZKPORT = "2181";
 	 public static final String ZOOKEEPERSERVICEYAMLPATH = "/dskubernetesdaemonset/dszookeeperservice.yaml";
 	 public static final String STANDALONESERVICEYAMLPATH = "/dskubernetesdaemonset/dsstandaloneservice.yaml";
 	
@@ -53,5 +54,12 @@ public class DataSamudayaOperatorConstants {
 	 public static final String SERVICE_MAP_EVENT_SOURCE = "ServiceMapEventSource";
 	 
 	 public static final String EMPTYSTRING = "";
-	 
+	 public static final String HYPHEN = "-";
+	 public static final String COLON = ":";
+	 public static final String WORKER = "worker";
+	 public static final String STANDALONE = "standalone";
+	 public static final String ZOOKEEPER = "zookeeper";
+	 public static final String SERVICE = "svc";
+	 public static final String APPLICATION = "app";
+	 public static final String INDEX = "0";
 }

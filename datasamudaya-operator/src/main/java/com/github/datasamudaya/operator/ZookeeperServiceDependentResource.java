@@ -1,9 +1,13 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPERSERVICEYAMLPATH;
 import static java.util.Objects.isNull;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,13 @@ implements Creator<Service, DatasamudayaOperatorCustomResource>, Deleter<Datasam
     protected Service desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
         Service zookeeperService = context.getClient().services().load(new ByteArrayInputStream(zookeeperServiceYaml.getBytes())).item();
+        String primaryName = primary.getMetadata().getName() + HYPHEN;
+        zookeeperService.getMetadata().setName(primaryName+ZOOKEEPER);
+        zookeeperService.getMetadata().setNamespace(primary.getMetadata().getNamespace());
+        Map<String, String> labels = zookeeperService.getMetadata().getLabels();
+        labels.put(APPLICATION, primaryName+ZOOKEEPER);
+        labels = zookeeperService.getSpec().getSelector();
+        labels.put(APPLICATION, primaryName+ZOOKEEPER);
 		return zookeeperService;
     }
     
