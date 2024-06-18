@@ -66,9 +66,10 @@ public class ContainerStatefulSetDependentResource
 		limits.put(CPU, nonNull(primary.getSpec().getContainerlimitcpu())?Quantity.parse(primary.getSpec().getContainerlimitcpu()):Quantity.parse(CONTAINERLIMITCPU_DEFAULT));
 		limits.put(MEMORY, nonNull(primary.getSpec().getContainerlimitmemory())?Quantity.parse(primary.getSpec().getContainerlimitmemory()):Quantity.parse(CONTAINERLIMITMEMORY_DEFAULT));
 		Map<String, Quantity> requests = new HashMap<>();
-		limits.put(CPU, nonNull(primary.getSpec().getContainerrequestcpu())?Quantity.parse(primary.getSpec().getContainerrequestcpu()):Quantity.parse(CONTAINERREQUESTCPU_DEFAULT));
-		limits.put(MEMORY, nonNull(primary.getSpec().getContainerrequestmemory())?Quantity.parse(primary.getSpec().getContainerrequestmemory()):Quantity.parse(CONTAINERREQUESTMEMORY_DEFAULT));
-		container.getResources().setLimits(requests);
+		requests.put(CPU, nonNull(primary.getSpec().getContainerrequestcpu())?Quantity.parse(primary.getSpec().getContainerrequestcpu()):Quantity.parse(CONTAINERREQUESTCPU_DEFAULT));
+		requests.put(MEMORY, nonNull(primary.getSpec().getContainerrequestmemory())?Quantity.parse(primary.getSpec().getContainerrequestmemory()):Quantity.parse(CONTAINERREQUESTMEMORY_DEFAULT));
+		container.getResources().setLimits(limits);
+		container.getResources().setRequests(requests);
 		containerStatefulSet.getSpec().setReplicas(primary.getSpec().getNumberofworkers()>1?primary.getSpec().getNumberofworkers():1);
 		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
 		container.getEnv().get(4).setValue(primaryName+ZOOKEEPER+COLON+ZKPORT);

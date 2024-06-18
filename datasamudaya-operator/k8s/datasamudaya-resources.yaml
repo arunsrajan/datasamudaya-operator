@@ -1,0 +1,19 @@
+apiVersion: com.github.datasamudaya.operator/v1
+kind: DatasamudayaOperatorCustomResource
+metadata:
+  name: datasamudaya-resources
+spec:
+  podcidrnodemappingenabled: "true"
+  numberofworkers: 1
+  salimitcpu: "1"
+  salimitmemory: "768Mi"
+  sarequestcpu: "250m"
+  sarequestmemory: "256Mi"
+  containerrequestcpu: "250m"
+  containerrequestmemory: "256Mi"
+  containerlimitcpu: "1"
+  containerlimitmemory: "768Mi"
+  zklimitcpu: "500m"
+  zklimitmemory: "768Mi"
+  zkrequestcpu: "250m"
+  zkrequestmemory: "256Mi"

@@ -64,6 +64,7 @@ public class ZookeeperStatefulSetDependentResource
 		requests.put(CPU, nonNull(primary.getSpec().getZkrequestcpu())?Quantity.parse(primary.getSpec().getZkrequestcpu()):Quantity.parse(ZKREQUESTCPU_DEFAULT));
 		requests.put(MEMORY, nonNull(primary.getSpec().getZkrequestmemory())?Quantity.parse(primary.getSpec().getZkrequestmemory()):Quantity.parse(ZKREQUESTMEMORY_DEFAULT));
 		zookeeper.getResources().setRequests(requests);
+		zookeeper.getResources().setLimits(limits);
 		return zookeeperStatefulSet;
     }
     @Override

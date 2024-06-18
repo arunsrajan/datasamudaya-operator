@@ -64,9 +64,10 @@ public class StandaloneStatefulSetDependentResource
 		limits.put(CPU, nonNull(primary.getSpec().getSalimitcpu())?Quantity.parse(primary.getSpec().getSalimitcpu()):Quantity.parse(SALIMITCPU_DEFAULT));
 		limits.put(MEMORY, nonNull(primary.getSpec().getSalimitmemory())?Quantity.parse(primary.getSpec().getSalimitmemory()):Quantity.parse(SALIMITMEMORY_DEFAULT));
 		Map<String, Quantity> requests = new HashMap<>();
-		limits.put(CPU, nonNull(primary.getSpec().getSarequestcpu())?Quantity.parse(primary.getSpec().getSarequestcpu()):Quantity.parse(SAREQUESTCPU_DEFAULT));
-		limits.put(MEMORY, nonNull(primary.getSpec().getSarequestmemory())?Quantity.parse(primary.getSpec().getSarequestmemory()):Quantity.parse(SAREQUESTMEMORY_DEFAULT));
-		container.getResources().setLimits(requests);
+		requests.put(CPU, nonNull(primary.getSpec().getSarequestcpu())?Quantity.parse(primary.getSpec().getSarequestcpu()):Quantity.parse(SAREQUESTCPU_DEFAULT));
+		requests.put(MEMORY, nonNull(primary.getSpec().getSarequestmemory())?Quantity.parse(primary.getSpec().getSarequestmemory()):Quantity.parse(SAREQUESTMEMORY_DEFAULT));
+		container.getResources().setLimits(limits);
+		container.getResources().setRequests(requests);
 		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
 		container.getEnv().get(2).setValue(primaryName+ZOOKEEPER+COLON+ZKPORT);
 		return standaloneStatefulSet;

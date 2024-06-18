@@ -1,8 +1,8 @@
 apiVersion: com.github.datasamudaya.operator/v1
 kind: DatasamudayaOperatorCustomResource
 metadata:
-  name: dsamudaya
+  name: datasamudaya-single
 spec:
   podcidrnodemappingenabled: "true"
-  numberofworkers: 2
+  numberofworkers: 1
   
