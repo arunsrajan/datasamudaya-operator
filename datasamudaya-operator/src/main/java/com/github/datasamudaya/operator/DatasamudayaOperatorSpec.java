@@ -32,6 +32,20 @@ public class DatasamudayaOperatorSpec {
     private String containerlimitcpu;
     private String containerlimitmemory;
     
+    //Namenode properties
+  	private String namenodeimage;
+  	private String namenoderequestcpu;
+    private String namenoderequestmemory;
+    private String namenodelimitcpu;
+    private String namenodelimitmemory;
+    
+    //Datanode properties
+  	private String datanodeimage;
+  	private String datanoderequestcpu;
+    private String datanoderequestmemory;
+    private String datanodelimitcpu;
+    private String datanodelimitmemory;
+    
 	public String getNamespace() {
 		return namespace;
 	}
@@ -183,6 +197,86 @@ public class DatasamudayaOperatorSpec {
 	public void setContainerlimitmemory(String containerlimitmemory) {
 		this.containerlimitmemory = containerlimitmemory;
 	}
+	
+	public String getNamenodeimage() {
+		return namenodeimage;
+	}
+
+	public void setNamenodeimage(String namenodeimage) {
+		this.namenodeimage = namenodeimage;
+	}
+
+	public String getNamenoderequestcpu() {
+		return namenoderequestcpu;
+	}
+
+	public void setNamenoderequestcpu(String namenoderequestcpu) {
+		this.namenoderequestcpu = namenoderequestcpu;
+	}
+
+	public String getNamenoderequestmemory() {
+		return namenoderequestmemory;
+	}
+
+	public void setNamenoderequestmemory(String namenoderequestmemory) {
+		this.namenoderequestmemory = namenoderequestmemory;
+	}
+
+	public String getNamenodelimitcpu() {
+		return namenodelimitcpu;
+	}
+
+	public void setNamenodelimitcpu(String namenodelimitcpu) {
+		this.namenodelimitcpu = namenodelimitcpu;
+	}
+
+	public String getNamenodelimitmemory() {
+		return namenodelimitmemory;
+	}
+
+	public void setNamenodelimitmemory(String namenodelimitmemory) {
+		this.namenodelimitmemory = namenodelimitmemory;
+	}
+
+	public String getDatanodeimage() {
+		return datanodeimage;
+	}
+
+	public void setDatanodeimage(String datanodeimage) {
+		this.datanodeimage = datanodeimage;
+	}
+
+	public String getDatanoderequestcpu() {
+		return datanoderequestcpu;
+	}
+
+	public void setDatanoderequestcpu(String datanoderequestcpu) {
+		this.datanoderequestcpu = datanoderequestcpu;
+	}
+
+	public String getDatanoderequestmemory() {
+		return datanoderequestmemory;
+	}
+
+	public void setDatanoderequestmemory(String datanoderequestmemory) {
+		this.datanoderequestmemory = datanoderequestmemory;
+	}
+
+	public String getDatanodelimitcpu() {
+		return datanodelimitcpu;
+	}
+
+	public void setDatanodelimitcpu(String datanodelimitcpu) {
+		this.datanodelimitcpu = datanodelimitcpu;
+	}
+
+	public String getDatanodelimitmemory() {
+		return datanodelimitmemory;
+	}
+
+	public void setDatanodelimitmemory(String datanodelimitmemory) {
+		this.datanodelimitmemory = datanodelimitmemory;
+	}
 
 	@Override
 	public String toString() {
@@ -193,7 +287,12 @@ public class DatasamudayaOperatorSpec {
 				+ sarequestcpu + ", sarequestmemory=" + sarequestmemory + ", salimitcpu=" + salimitcpu
 				+ ", salimitmemory=" + salimitmemory + ", containerimage=" + containerimage + ", containerrequestcpu="
 				+ containerrequestcpu + ", containerrequestmemory=" + containerrequestmemory + ", containerlimitcpu="
-				+ containerlimitcpu + ", containerlimitmemory=" + containerlimitmemory + "]";
+				+ containerlimitcpu + ", containerlimitmemory=" + containerlimitmemory + ", namenodeimage="
+				+ namenodeimage + ", namenoderequestcpu=" + namenoderequestcpu + ", namenoderequestmemory="
+				+ namenoderequestmemory + ", namenodelimitcpu=" + namenodelimitcpu + ", namenodelimitmemory="
+				+ namenodelimitmemory + ", datanodeimage=" + datanodeimage + ", datanoderequestcpu="
+				+ datanoderequestcpu + ", datanoderequestmemory=" + datanoderequestmemory + ", datanodelimitcpu="
+				+ datanodelimitcpu + ", datanodelimitmemory=" + datanodelimitmemory + "]";
 	}
-	
+
 }

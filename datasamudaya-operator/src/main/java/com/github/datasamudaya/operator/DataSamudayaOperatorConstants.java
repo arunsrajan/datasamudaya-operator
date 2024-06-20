@@ -52,6 +52,7 @@ public class DataSamudayaOperatorConstants {
 	
 	 public static final String STATEFULSET_MAP_EVENT_SOURCE = "StatefulSetMapEventSource";
 	 public static final String SERVICE_MAP_EVENT_SOURCE = "ServiceMapEventSource";
+	 public static final String DAEMONSET_MAP_EVENT_SOURCE = "DaemonSetMapEventSource";
 	 
 	 public static final String EMPTYSTRING = "";
 	 public static final String HYPHEN = "-";
@@ -62,4 +63,22 @@ public class DataSamudayaOperatorConstants {
 	 public static final String SERVICE = "svc";
 	 public static final String APPLICATION = "app";
 	 public static final String INDEX = "0";
+	 
+	 public static final String HADOOPNAMENODEDAEMONSETYAMLPATH = "/dskubernetesdaemonset/hadoop-namenode-daemonset.yaml";
+	 public static final String HADOOPNAMENODESERVICEYAMLPATH = "/dskubernetesdaemonset/hadoop-namenode-service.yaml";
+	 public static final String HADOOPDATANODEDAEMONSETYAMLPATH = "/dskubernetesdaemonset/hadoop-datanode-daemonset.yaml";
+	 public static final String NAMENODE = "hadoop-namenode";
+	 public static final String NAMENODEIMAGE = "arunsrajan/hadoop-namenode:2.0.0-hadoop3.1.3-java8";
+	 public static final String NAMENODEREQUESTMEMORY_DEFAULT = "64Mi";
+	 public static final String NAMENODEURL = "hdfs://%s:9000";
+	 public static final String NAMENODEREQUESTCPU_DEFAULT = "250m";
+	 public static final String NAMENODELIMITMEMORY_DEFAULT = "1024Mi";
+	 public static final String NAMENODELIMITCPU_DEFAULT = "500m";
+	 public static final String DATANODE = "hadoop-datanode";
+	 public static final String DATANODEIMAGE = "arunsrajan/hadoop-datanode:2.0.0-hadoop3.1.3-java8";
+	 public static final String DATANODEREQUESTMEMORY_DEFAULT = "64Mi";
+	 public static final String DATANODEREQUESTCPU_DEFAULT = "250m";
+	 public static final String DATANODELIMITMEMORY_DEFAULT = "1024Mi";
+	 public static final String DATANODELIMITCPU_DEFAULT = "500m";
+	 
 }

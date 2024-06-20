@@ -52,6 +52,8 @@ spec:
                   fieldPath: status.podIP
             - name: TSPORT
               value: "11111"
+            - name: NAMENODEURL
+              value: hdfs://namenode:9000
           ports:
             - containerPort: 22222
               name: streamproto

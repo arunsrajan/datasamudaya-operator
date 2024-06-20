@@ -27,6 +27,26 @@ spec:
               type: string
             containerrequestmemory:
               type: string
+            datanodeimage:
+              type: string
+            datanodelimitcpu:
+              type: string
+            datanodelimitmemory:
+              type: string
+            datanoderequestcpu:
+              type: string
+            datanoderequestmemory:
+              type: string
+            namenodeimage:
+              type: string
+            namenodelimitcpu:
+              type: string
+            namenodelimitmemory:
+              type: string
+            namenoderequestcpu:
+              type: string
+            namenoderequestmemory:
+              type: string
             namespace:
               type: string
             numberofworkers:

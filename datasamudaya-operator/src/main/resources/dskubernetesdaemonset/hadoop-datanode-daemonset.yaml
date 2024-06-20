@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: hadoop-hdfs-datanode
+  labels:
+    app: hadoop-hdfs-datanode
+spec:
+  selector:
+    matchLabels:
+      app: hadoop-hdfs-datanode
+  template:
+    metadata:
+      labels:
+        app: hadoop-hdfs-datanode
+    spec:
+      nodeSelector:
+        datanode: "true"
+      containers:
+        - name: hadoop-hdfs-datanode-container
+          image: arunsrajan/hadoop-datanode:2.0.0-hadoop3.1.3-java8
+          resources:
+              requests:
+                cpu: "250m"
+                memory: "256Mi"
+              limits:
+                cpu: "500m"
+                memory: "1024Mi"
+          imagePullPolicy: Always
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: CORE_CONF_fs_defaultFS
+              value: hdfs://192.168.67.3:9000
+            - name: HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check
+              value: "false"
+            - name: HDFS_CONF_dfs_datanode_use_datanode_hostname
+              value: "false"
+            - name: HDFS_CONF_dfs_client_use_datanode_hostname
+              value: "false"
+            - name: HDFS_CONF_dfs_datanode_address
+              value: 0.0.0.0:9866
+            - name: HDFS_CONF_dfs_permissions_enabled
+              value: "false"
+      hostNetwork: true

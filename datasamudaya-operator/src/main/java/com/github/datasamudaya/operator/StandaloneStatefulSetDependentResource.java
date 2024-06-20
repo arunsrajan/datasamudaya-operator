@@ -5,6 +5,8 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.COL
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.PODCIDRNODEMAPPINGENABLED_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITMEMORY_DEFAULT;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.Container;
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
@@ -70,6 +73,10 @@ public class StandaloneStatefulSetDependentResource
 		container.getResources().setRequests(requests);
 		container.getEnv().get(0).setValue(nonNull(primary.getSpec().getPodcidrnodemappingenabled())?primary.getSpec().getPodcidrnodemappingenabled():PODCIDRNODEMAPPINGENABLED_DEFAULT);
 		container.getEnv().get(2).setValue(primaryName+ZOOKEEPER+COLON+ZKPORT);
+		Map<String, String> nameNodeLabel = new HashMap<>();
+		nameNodeLabel.put(APPLICATION, primaryName+NAMENODE);
+		Pod primaryPod = context.getClient().pods().inNamespace(primary.getMetadata().getNamespace()).withLabels(nameNodeLabel).list().getItems().get(0);
+		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, primaryPod.getStatus().getHostIP()));
 		return standaloneStatefulSet;
     }
     @Override

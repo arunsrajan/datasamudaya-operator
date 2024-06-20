@@ -51,6 +51,8 @@ spec:
               value: -Xms512M
             - name: TSHOST
               value: -Xmx512M
+            - name: NAMENODEURL
+              value: hdfs://namenode:9000
           ports:
             - containerPort: 12121
               name: nodep
