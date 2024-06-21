@@ -29,7 +29,7 @@ public class StandaloneServiceDependentResource
 	public StandaloneServiceDependentResource() {
 		super(Service.class);
 		standaloneServiceYaml = Utils.readResource(STANDALONESERVICEYAMLPATH);
-		log.error("Standalone Service Yaml:\n {}", standaloneServiceYaml);
+		log.info("Standalone Service Yaml:\n {}", standaloneServiceYaml);
 	}
     @Override
     protected Service desired(DatasamudayaOperatorCustomResource primary,

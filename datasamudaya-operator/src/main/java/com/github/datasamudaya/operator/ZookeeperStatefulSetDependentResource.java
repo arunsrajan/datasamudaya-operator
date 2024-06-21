@@ -4,6 +4,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APP
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKLIMITCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKLIMITMEMORY_DEFAULT;
@@ -40,7 +41,7 @@ public class ZookeeperStatefulSetDependentResource
     public ZookeeperStatefulSetDependentResource() {
         super(StatefulSet.class);
         zkstatefulsetYaml = Utils.readResource(ZOOKEEPERYAMLPATH);
-        log.error("ZookeeperStatefulSet Yaml:\n {}", zkstatefulsetYaml);
+        log.info("ZookeeperStatefulSet Yaml:\n {}", zkstatefulsetYaml);
     }
     @Override
     protected StatefulSet desired(DatasamudayaOperatorCustomResource primary,
@@ -65,6 +66,7 @@ public class ZookeeperStatefulSetDependentResource
 		requests.put(MEMORY, nonNull(primary.getSpec().getZkrequestmemory())?Quantity.parse(primary.getSpec().getZkrequestmemory()):Quantity.parse(ZKREQUESTMEMORY_DEFAULT));
 		zookeeper.getResources().setRequests(requests);
 		zookeeper.getResources().setLimits(limits);
+		zookeeperStatefulSet.getSpec().getTemplate().getSpec().setServiceAccountName(primaryName+SERVICEACCOUNTNAME);
 		return zookeeperStatefulSet;
     }
     @Override

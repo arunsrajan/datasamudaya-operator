@@ -29,7 +29,7 @@ implements Creator<Service, DatasamudayaOperatorCustomResource>, Deleter<Datasam
 	public ZookeeperServiceDependentResource() {
 		super(Service.class);
 		zookeeperServiceYaml = Utils.readResource(ZOOKEEPERSERVICEYAMLPATH);
-		log.error("ZookeeperService Yaml:\n {}", zookeeperServiceYaml);
+		log.info("ZookeeperService Yaml:\n {}", zookeeperServiceYaml);
 	}
 	
     @Override

@@ -19,3 +19,9 @@ To create hadoop daemonset.
 --------------------------
 kubectl label nodes datasamudayadaemons-m02 namenode=true
 kubectl label nodes datasamudayadaemons datasamudayadaemons-m02 datasamudayadaemons-m03 datanode=true
+
+
+To create Services for application
+----------------------------------
+minikube service datasamudaya-single-ports-standalone -p datasamudayadaemons
+minikube service datasamudaya-single-standalone -p datasamudayadaemons

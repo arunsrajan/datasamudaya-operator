@@ -13,6 +13,7 @@ spec:
       labels:
         app: hadoop-hdfs-datanode
     spec:
+      serviceAccountName: datasamudaya-service-account
       nodeSelector:
         datanode: "true"
       containers:

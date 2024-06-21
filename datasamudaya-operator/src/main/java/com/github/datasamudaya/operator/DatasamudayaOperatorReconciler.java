@@ -1,17 +1,21 @@
 package com.github.datasamudaya.operator;
 
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CLUSTERROLEBINDINGNAME;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CLUSTERROLENAME;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CLUSTERROLE_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CLUSTERROLEBINDINGS_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DAEMONSET_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNT_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICE_MAP_EVENT_SOURCE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STATEFULSET_MAP_EVENT_SOURCE;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DAEMONSET_MAP_EVENT_SOURCE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.WORKER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODE;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,10 +25,12 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.apps.DaemonSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
+import io.fabric8.kubernetes.api.model.rbac.ClusterRole;
+import io.fabric8.kubernetes.api.model.rbac.ClusterRoleBinding;
 import io.fabric8.kubernetes.client.dsl.Replaceable;
 import io.javaoperatorsdk.operator.api.config.informer.InformerConfiguration;
 import io.javaoperatorsdk.operator.api.reconciler.Cleaner;
@@ -40,6 +46,12 @@ import io.javaoperatorsdk.operator.processing.event.source.EventSource;
 import io.javaoperatorsdk.operator.processing.event.source.informer.InformerEventSource;
 
 @ControllerConfiguration(dependents = {
+										@Dependent(type = DatasamudayaServiceAccountDependentResource.class,
+												useEventSourceWithName = SERVICEACCOUNT_MAP_EVENT_SOURCE),
+										@Dependent(type = DatasamudayaClusterRoleDependentResource.class,
+										useEventSourceWithName = CLUSTERROLE_MAP_EVENT_SOURCE),
+										@Dependent(type = DatasamudayaClusterRoleBindingsDependentResource.class,
+										useEventSourceWithName = CLUSTERROLEBINDINGS_MAP_EVENT_SOURCE),	
 										@Dependent(type = NameNodeDaemonSetDependentResource.class,
 												useEventSourceWithName = DAEMONSET_MAP_EVENT_SOURCE),
 										@Dependent(type = DataNodeDaemonSetDependentResource.class,
@@ -68,6 +80,36 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
     public UpdateControl<DatasamudayaOperatorCustomResource> reconcile(DatasamudayaOperatorCustomResource primary,
                                                      Context<DatasamudayaOperatorCustomResource> context) {
     	log.info("The Resource To be Reconciled: {}", primary);
+    	
+    	Optional<Set<ServiceAccount>> previousServiceAccount = Optional.ofNullable(context.getSecondaryResources(ServiceAccount.class));
+    	
+    	if(previousServiceAccount.isEmpty() || previousServiceAccount.get().isEmpty()) {
+    		DatasamudayaServiceAccountDependentResource dssadr = new DatasamudayaServiceAccountDependentResource();
+			context.getClient().serviceAccounts().resource(dssadr.desired(primary, context))
+			.createOr(Replaceable::update);
+    	} else {
+	    	
+    	}
+    	
+    	Optional<Set<ClusterRole>> previousClusterRole = Optional.ofNullable(context.getSecondaryResources(ClusterRole.class));
+    	
+    	if(previousClusterRole.isEmpty() || previousClusterRole.get().isEmpty()) {
+    		DatasamudayaClusterRoleDependentResource dscrdr = new DatasamudayaClusterRoleDependentResource();
+			context.getClient().rbac().clusterRoles().resource(dscrdr.desired(primary, context))
+			.createOr(Replaceable::update);
+    	} else {
+	    	
+    	}
+    	
+    	Optional<Set<ClusterRoleBinding>> previousClusterRoleBinding = Optional.ofNullable(context.getSecondaryResources(ClusterRoleBinding.class));
+    	
+    	if(previousClusterRoleBinding.isEmpty() || previousClusterRoleBinding.get().isEmpty()) {
+    		DatasamudayaClusterRoleBindingsDependentResource dscrbdr = new DatasamudayaClusterRoleBindingsDependentResource();
+			context.getClient().rbac().clusterRoleBindings().resource(dscrbdr.desired(primary, context))
+			.createOr(Replaceable::update);
+    	} else {
+	    	
+    	}
     	
     	Optional<Set<Service>> previousService = Optional.ofNullable(context.getSecondaryResources(Service.class));    	
     	boolean isServiceCreated = false;
@@ -160,8 +202,26 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
       InformerEventSource<DaemonSet, DatasamudayaOperatorCustomResource> daemonsets =
               new InformerEventSource<>(InformerConfiguration.from(DaemonSet.class, context)
                   .build(), context);
+      
+      InformerEventSource<ServiceAccount, DatasamudayaOperatorCustomResource> sas =
+              new InformerEventSource<>(InformerConfiguration.from(ServiceAccount.class, context)
+                  .build(), context);
+      
+      InformerEventSource<ClusterRole, DatasamudayaOperatorCustomResource> clusterRoles =
+              new InformerEventSource<>(InformerConfiguration.from(ClusterRole.class, context)
+                  .build(), context);
+      
+      InformerEventSource<ClusterRoleBinding, DatasamudayaOperatorCustomResource> clusterRoleBindings =
+              new InformerEventSource<>(InformerConfiguration.from(ClusterRoleBinding.class, context)
+                  .build(), context);
 
-      return Map.of(STATEFULSET_MAP_EVENT_SOURCE, ssies, SERVICE_MAP_EVENT_SOURCE, svces, DAEMONSET_MAP_EVENT_SOURCE, daemonsets);
+      return Map.of(STATEFULSET_MAP_EVENT_SOURCE, ssies, 
+    		  SERVICE_MAP_EVENT_SOURCE, svces, 
+    		  DAEMONSET_MAP_EVENT_SOURCE, daemonsets,
+    		  SERVICEACCOUNT_MAP_EVENT_SOURCE, sas,
+			  CLUSTERROLE_MAP_EVENT_SOURCE, clusterRoles,
+			  CLUSTERROLEBINDINGS_MAP_EVENT_SOURCE, clusterRoleBindings
+    		  );
     }
 
 	@Override
@@ -183,6 +243,12 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
 		.withName(primary.getMetadata().getName()+HYPHEN+NAMENODE).delete();
 		context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace())
 		.withName(primary.getMetadata().getName()+HYPHEN+DATANODE).delete();
+		context.getClient().rbac().clusterRoleBindings()
+		.withName(primary.getMetadata().getName()+HYPHEN+CLUSTERROLEBINDINGNAME).delete();
+		context.getClient().rbac().clusterRoles()
+		.withName(primary.getMetadata().getName()+HYPHEN+CLUSTERROLENAME).delete();
+		context.getClient().serviceAccounts().inNamespace(primary.getMetadata().getNamespace())
+		.withName(primary.getMetadata().getName()+HYPHEN+SERVICEACCOUNTNAME).delete();
 		return DeleteControl.defaultDelete();
 	}
 }

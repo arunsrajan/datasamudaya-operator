@@ -18,6 +18,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEM
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -48,7 +49,7 @@ public class DataNodeDaemonSetDependentResource
 	public DataNodeDaemonSetDependentResource() {
 		super(DaemonSet.class);
 		this.datanodeYaml = Utils.readResource(HADOOPDATANODEDAEMONSETYAMLPATH);
-		log.error("Datanode StatefulSet Yaml:\n {}", datanodeYaml);
+		log.info("Datanode StatefulSet Yaml:\n {}", datanodeYaml);
 	}
 	
     @Override
@@ -82,6 +83,7 @@ public class DataNodeDaemonSetDependentResource
 		container.getEnv().get(5).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeport())?primary.getSpec().getDatanodeport():DATANODEPORT_DEFAULT));
 		container.getEnv().get(6).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeportwebui())?primary.getSpec().getDatanodeportwebui():DATANODEPORTWEBUI_DEFAULT));
 		container.getEnv().get(7).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeportipc())?primary.getSpec().getDatanodeportipc():DATANODEPORTIPC_DEFAULT));
+		dataNodeDaemoneSet.getSpec().getTemplate().getSpec().setServiceAccountName(primaryName+SERVICEACCOUNTNAME);
 		return dataNodeDaemoneSet;
     }
     

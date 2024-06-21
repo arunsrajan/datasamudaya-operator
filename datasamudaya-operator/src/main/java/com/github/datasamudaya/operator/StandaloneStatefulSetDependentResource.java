@@ -13,6 +13,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAL
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAREQUESTCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SAREQUESTMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONEYAMLPATH;
@@ -47,7 +48,7 @@ public class StandaloneStatefulSetDependentResource
     public StandaloneStatefulSetDependentResource() {
         super(StatefulSet.class);
         standaloneYaml = Utils.readResource(STANDALONEYAMLPATH);
-        log.error("Standalone StatefulSet Yaml:\n {}", standaloneYaml);
+        log.info("Standalone StatefulSet Yaml:\n {}", standaloneYaml);
     }
     @Override
     protected StatefulSet desired(DatasamudayaOperatorCustomResource primary,
@@ -79,6 +80,7 @@ public class StandaloneStatefulSetDependentResource
 		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
 		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP(),
 				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
+		standaloneStatefulSet.getSpec().getTemplate().getSpec().setServiceAccountName(primaryName+SERVICEACCOUNTNAME);
 		return standaloneStatefulSet;
     }
     @Override

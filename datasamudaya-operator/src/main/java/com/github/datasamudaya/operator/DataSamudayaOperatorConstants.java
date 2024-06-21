@@ -53,6 +53,9 @@ public class DataSamudayaOperatorConstants {
 	 public static final String STATEFULSET_MAP_EVENT_SOURCE = "StatefulSetMapEventSource";
 	 public static final String SERVICE_MAP_EVENT_SOURCE = "ServiceMapEventSource";
 	 public static final String DAEMONSET_MAP_EVENT_SOURCE = "DaemonSetMapEventSource";
+	 public static final String SERVICEACCOUNT_MAP_EVENT_SOURCE = "ServiceAccountMapEventSource";
+	 public static final String CLUSTERROLE_MAP_EVENT_SOURCE = "ClusterRoleMapEventSource";
+	 public static final String CLUSTERROLEBINDINGS_MAP_EVENT_SOURCE = "ClusterRoleBindingsMapEventSource";
 	 
 	 public static final String EMPTYSTRING = "";
 	 public static final String HYPHEN = "-";
@@ -87,4 +90,13 @@ public class DataSamudayaOperatorConstants {
 	 public static final String DATANODEPORT_DEFAULT = "9866";
 	 public static final String DATANODEPORTWEBUI_DEFAULT = "9864";
 	 public static final String DATANODEPORTIPC_DEFAULT = "9867";
+	 
+	 public static final String SERVICEACCOUNTYAMLPATH = "/dskubernetesdaemonset/dsserviceaccount.yaml";
+	 public static final String SERVICEACCOUNTNAME = "service-account";
+	 
+	 public static final String CLUSTERROLEYAMLPATH = "/dskubernetesdaemonset/dsclusterrole.yaml";
+	 public static final String CLUSTERROLENAME = "cluster-role";
+	 
+	 public static final String CLUSTERROLEBINDINGYAMLPATH = "/dskubernetesdaemonset/dsclusterrolebinding.yaml";
+	 public static final String CLUSTERROLEBINDINGNAME = "cluster-role-binding";
 }

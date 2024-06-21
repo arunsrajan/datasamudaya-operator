@@ -14,6 +14,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAM
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEREQUESTMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURLWEBUI;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORTWEBUI_DEFAULT;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -45,7 +46,7 @@ public class NameNodeDaemonSetDependentResource
 	public NameNodeDaemonSetDependentResource() {
 		super(DaemonSet.class);
 		this.namenodeYaml = Utils.readResource(HADOOPNAMENODEDAEMONSETYAMLPATH);
-		log.error("Namenode StatefulSet Yaml:\n {}", namenodeYaml);
+		log.info("Namenode StatefulSet Yaml:\n {}", namenodeYaml);
 	}
 	
     @Override
@@ -76,6 +77,7 @@ public class NameNodeDaemonSetDependentResource
 				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
 		container.getEnv().get(2).setValue(String.format(NAMENODEURLWEBUI, primaryNode.getStatus().getAddresses().get(0).getAddress(),
 				nonNull(primary.getSpec().getNamenodeportwebui())?primary.getSpec().getNamenodeportwebui():NAMENODEPORTWEBUI_DEFAULT));
+		nameNodeDaemoneSet.getSpec().getTemplate().getSpec().setServiceAccountName(primaryName+SERVICEACCOUNTNAME);
 		return nameNodeDaemoneSet;
     }
     

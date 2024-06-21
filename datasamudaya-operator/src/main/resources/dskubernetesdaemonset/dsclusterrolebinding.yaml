@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+    name: datasamudaya-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: datasamudaya-service-account
+  namespace: default
+roleRef:
+    kind: ClusterRole
+    name: datasamudaya-cluster-role
+    apiGroup: rbac.authorization.k8s.io

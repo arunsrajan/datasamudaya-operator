@@ -15,6 +15,7 @@ spec:
       labels:
         app: datasamudayacontainer
     spec:
+      serviceAccountName: datasamudaya-service-account
       containers:
         - name: datasamudayacontainer
           image: arunsrajan/datasamudayacontainer:latest

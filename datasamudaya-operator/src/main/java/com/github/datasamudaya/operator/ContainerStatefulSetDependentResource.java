@@ -15,6 +15,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAM
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.PODCIDRNODEMAPPINGENABLED_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICEACCOUNTNAME;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.WORKER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZKPORT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
@@ -48,7 +49,7 @@ public class ContainerStatefulSetDependentResource
 	public ContainerStatefulSetDependentResource() {
 		super(StatefulSet.class);
 		this.containerYaml = Utils.readResource(CONTAINERYAMLPATH);
-		log.error("Container StatefulSet Yaml:\n {}", containerYaml);
+		log.info("Container StatefulSet Yaml:\n {}", containerYaml);
 	}
 	
     @Override
@@ -82,6 +83,7 @@ public class ContainerStatefulSetDependentResource
 		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
 		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP(),
 				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
+		containerStatefulSet.getSpec().getTemplate().getSpec().setServiceAccountName(primaryName+SERVICEACCOUNTNAME);
 		return containerStatefulSet;
     }
     

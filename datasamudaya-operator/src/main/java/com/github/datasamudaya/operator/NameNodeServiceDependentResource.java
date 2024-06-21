@@ -33,7 +33,7 @@ implements Creator<Service, DatasamudayaOperatorCustomResource>, Deleter<Datasam
 	public NameNodeServiceDependentResource() {
 		super(Service.class);
 		namenodeServiceYaml = Utils.readResource(HADOOPNAMENODESERVICEYAMLPATH);
-		log.error("NameNodeService Yaml:\n {}", namenodeServiceYaml);
+		log.info("NameNodeService Yaml:\n {}", namenodeServiceYaml);
 	}
 	
     @Override
