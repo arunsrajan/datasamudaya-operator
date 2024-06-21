@@ -1,0 +1,12 @@
+apiVersion: com.github.datasamudaya.operator/v1
+kind: DatasamudayaOperatorCustomResource
+metadata:
+  name: datasamudaya-single-ports
+spec:
+  podcidrnodemappingenabled: "true"
+  numberofworkers: 1
+  namenodeport: "9001"
+  namenodeportwebui: "8870"
+  datanodeport: "8866"
+  datanodeportwebui: "8864"
+  datanodeportipc: "8867"

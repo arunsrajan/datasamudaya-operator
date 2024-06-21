@@ -41,6 +41,10 @@ spec:
               value: "false"
             - name: HDFS_CONF_dfs_datanode_address
               value: 0.0.0.0:9866
+            - name: HDFS_CONF_dfs_datanode_http_address
+              value: 0.0.0.0:9864
+            - name: HDFS_CONF_dfs_datanode_ipc_address
+              value: 0.0.0.0:9867
             - name: HDFS_CONF_dfs_permissions_enabled
               value: "false"
       hostNetwork: true

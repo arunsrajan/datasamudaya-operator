@@ -6,6 +6,7 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.PODCIDRNODEMAPPINGENABLED_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SALIMITCPU_DEFAULT;
@@ -76,7 +77,8 @@ public class StandaloneStatefulSetDependentResource
 		Map<String, String> nameNodeLabel = new HashMap<>();
 		nameNodeLabel.put(APPLICATION, primaryName+NAMENODE);
 		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
-		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP()));
+		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP(),
+				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
 		return standaloneStatefulSet;
     }
     @Override

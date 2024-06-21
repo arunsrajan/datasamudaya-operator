@@ -36,6 +36,16 @@ public class Utils {
 		int retry = 0;
 		while(true) {
 			primaryPods = context.getClient().pods().inNamespace(primary.getMetadata().getNamespace()).withLabels(nameNodeLabel).list().getItems();			
+			if(primaryPods.size()<1) {
+				try {
+					if(retry++ > POD_RETRY) {
+						break;
+					}
+					Thread.sleep(1000);
+					continue;
+		    	} catch (InterruptedException e) {
+		    	}
+			}
 			Pod pod = primaryPods.get(0);
 			if(pod.getStatus().getHostIP() != null && pod.getStatus().getHostIP().length()>=1) {
 				return	pod; 

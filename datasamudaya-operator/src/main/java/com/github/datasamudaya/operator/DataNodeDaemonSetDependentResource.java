@@ -2,23 +2,27 @@ package com.github.datasamudaya.operator;
 
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.CPU;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HADOOPDATANODEDAEMONSETYAMLPATH;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
-import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEURL;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEPORT_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEPORTWEBUI_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEPORTIPC_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODELIMITCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODELIMITMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEREQUESTCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODEREQUESTMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HADOOPDATANODEDAEMONSETYAMLPATH;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.MEMORY;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -73,7 +77,11 @@ public class DataNodeDaemonSetDependentResource
 		Map<String, String> nameNodeLabel = new HashMap<>();
 		nameNodeLabel.put(APPLICATION, primaryName+NAMENODE);
 		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
-		container.getEnv().get(1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP()));
+		container.getEnv().get(1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP(),
+				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
+		container.getEnv().get(5).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeport())?primary.getSpec().getDatanodeport():DATANODEPORT_DEFAULT));
+		container.getEnv().get(6).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeportwebui())?primary.getSpec().getDatanodeportwebui():DATANODEPORTWEBUI_DEFAULT));
+		container.getEnv().get(7).setValue(String.format(DATANODEURL,nonNull(primary.getSpec().getDatanodeportipc())?primary.getSpec().getDatanodeportipc():DATANODEPORTIPC_DEFAULT));
 		return dataNodeDaemoneSet;
     }
     

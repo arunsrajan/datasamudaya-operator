@@ -33,6 +33,12 @@ spec:
               type: string
             datanodelimitmemory:
               type: string
+            datanodeport:
+              type: string
+            datanodeportipc:
+              type: string
+            datanodeportwebui:
+              type: string
             datanoderequestcpu:
               type: string
             datanoderequestmemory:
@@ -42,6 +48,10 @@ spec:
             namenodelimitcpu:
               type: string
             namenodelimitmemory:
+              type: string
+            namenodeport:
+              type: string
+            namenodeportwebui:
               type: string
             namenoderequestcpu:
               type: string

@@ -34,6 +34,8 @@ spec:
                   fieldPath: status.hostIP
             - name: CORE_CONF_fs_defaultFS
               value: "hdfs://$(HOST_IP):9000"
+            - name: HDFS_CONF_dfs_namenode_http___address
+              value: "$(HOST_IP):9870" 
             - name: CLUSTER_NAME
               value: hadoopcluster
             - name: HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check

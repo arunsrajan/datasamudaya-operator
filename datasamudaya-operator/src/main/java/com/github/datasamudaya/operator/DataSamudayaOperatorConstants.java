@@ -70,7 +70,10 @@ public class DataSamudayaOperatorConstants {
 	 public static final String NAMENODE = "hadoop-namenode";
 	 public static final String NAMENODEIMAGE = "arunsrajan/hadoop-namenode:2.0.0-hadoop3.1.3-java8";
 	 public static final String NAMENODEREQUESTMEMORY_DEFAULT = "64Mi";
-	 public static final String NAMENODEURL = "hdfs://%s:9000";
+	 public static final String NAMENODEURL = "hdfs://%s:%s";
+	 public static final String NAMENODEURLWEBUI = "%s:%s";
+	 public static final String NAMENODEPORT_DEFAULT = "9000";
+	 public static final String NAMENODEPORTWEBUI_DEFAULT = "9870";
 	 public static final String NAMENODEREQUESTCPU_DEFAULT = "250m";
 	 public static final String NAMENODELIMITMEMORY_DEFAULT = "1024Mi";
 	 public static final String NAMENODELIMITCPU_DEFAULT = "500m";
@@ -80,5 +83,8 @@ public class DataSamudayaOperatorConstants {
 	 public static final String DATANODEREQUESTCPU_DEFAULT = "250m";
 	 public static final String DATANODELIMITMEMORY_DEFAULT = "1024Mi";
 	 public static final String DATANODELIMITCPU_DEFAULT = "500m";
-	 
+	 public static final String DATANODEURL = "0.0.0.0:%s";
+	 public static final String DATANODEPORT_DEFAULT = "9866";
+	 public static final String DATANODEPORTWEBUI_DEFAULT = "9864";
+	 public static final String DATANODEPORTIPC_DEFAULT = "9867";
 }

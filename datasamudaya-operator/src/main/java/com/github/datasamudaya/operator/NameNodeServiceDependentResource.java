@@ -4,7 +4,10 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APP
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYPHEN;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HADOOPNAMENODESERVICEYAMLPATH;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORTWEBUI_DEFAULT;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
@@ -12,6 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Service;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Deleter;
@@ -35,15 +39,25 @@ implements Creator<Service, DatasamudayaOperatorCustomResource>, Deleter<Datasam
     @Override
     protected Service desired(DatasamudayaOperatorCustomResource primary,
                                 Context<DatasamudayaOperatorCustomResource> context) {
-        Service zookeeperService = context.getClient().services().load(new ByteArrayInputStream(namenodeServiceYaml.getBytes())).item();
+        Service namenodeService = context.getClient().services().load(new ByteArrayInputStream(namenodeServiceYaml.getBytes())).item();
         String primaryName = primary.getMetadata().getName() + HYPHEN;
-        zookeeperService.getMetadata().setName(primaryName+NAMENODE);
-        zookeeperService.getMetadata().setNamespace(primary.getMetadata().getNamespace());
-        Map<String, String> labels = zookeeperService.getMetadata().getLabels();
+        namenodeService.getMetadata().setName(primaryName+NAMENODE);
+        namenodeService.getMetadata().setNamespace(primary.getMetadata().getNamespace());
+        Map<String, String> labels = namenodeService.getMetadata().getLabels();
         labels.put(APPLICATION, primaryName+NAMENODE);
-        labels = zookeeperService.getSpec().getSelector();
+        labels = namenodeService.getSpec().getSelector();
         labels.put(APPLICATION, primaryName+NAMENODE);
-		return zookeeperService;
+        IntOrString portTargetPort = new IntOrString();
+        int portTargetPortInt = nonNull(primary.getSpec().getNamenodeport())?Integer.parseInt(primary.getSpec().getNamenodeport()):Integer.parseInt(NAMENODEPORT_DEFAULT);
+        portTargetPort.setValue(portTargetPortInt);
+        namenodeService.getSpec().getPorts().get(1).setPort(portTargetPortInt);
+        namenodeService.getSpec().getPorts().get(1).setTargetPort(portTargetPort);
+        portTargetPort = new IntOrString();
+        portTargetPortInt = nonNull(primary.getSpec().getNamenodeportwebui())?Integer.parseInt(primary.getSpec().getNamenodeportwebui()):Integer.parseInt(NAMENODEPORTWEBUI_DEFAULT);
+        portTargetPort.setValue(portTargetPortInt);
+        namenodeService.getSpec().getPorts().get(0).setPort(portTargetPortInt);
+        namenodeService.getSpec().getPorts().get(0).setTargetPort(portTargetPort);
+		return namenodeService;
     }
     
     @Override

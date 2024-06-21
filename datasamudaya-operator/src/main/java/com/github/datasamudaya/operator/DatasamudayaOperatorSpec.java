@@ -38,6 +38,8 @@ public class DatasamudayaOperatorSpec {
     private String namenoderequestmemory;
     private String namenodelimitcpu;
     private String namenodelimitmemory;
+    private String namenodeport;
+    private String namenodeportwebui;
     
     //Datanode properties
   	private String datanodeimage;
@@ -45,6 +47,9 @@ public class DatasamudayaOperatorSpec {
     private String datanoderequestmemory;
     private String datanodelimitcpu;
     private String datanodelimitmemory;
+    private String datanodeport;
+    private String datanodeportwebui;
+    private String datanodeportipc;
     
 	public String getNamespace() {
 		return namespace;
@@ -278,6 +283,46 @@ public class DatasamudayaOperatorSpec {
 		this.datanodelimitmemory = datanodelimitmemory;
 	}
 
+	public String getNamenodeport() {
+		return namenodeport;
+	}
+
+	public void setNamenodeport(String namenodeport) {
+		this.namenodeport = namenodeport;
+	}
+
+	public String getNamenodeportwebui() {
+		return namenodeportwebui;
+	}
+
+	public void setNamenodeportwebui(String namenodeportwebui) {
+		this.namenodeportwebui = namenodeportwebui;
+	}
+
+	public String getDatanodeport() {
+		return datanodeport;
+	}
+
+	public void setDatanodeport(String datanodeport) {
+		this.datanodeport = datanodeport;
+	}
+
+	public String getDatanodeportwebui() {
+		return datanodeportwebui;
+	}
+
+	public void setDatanodeportwebui(String datanodeportwebui) {
+		this.datanodeportwebui = datanodeportwebui;
+	}
+
+	public String getDatanodeportipc() {
+		return datanodeportipc;
+	}
+
+	public void setDatanodeportipc(String datanodeportipc) {
+		this.datanodeportipc = datanodeportipc;
+	}
+
 	@Override
 	public String toString() {
 		return "DatasamudayaOperatorSpec [namespace=" + namespace + ", numberofworkers=" + numberofworkers
@@ -290,9 +335,11 @@ public class DatasamudayaOperatorSpec {
 				+ containerlimitcpu + ", containerlimitmemory=" + containerlimitmemory + ", namenodeimage="
 				+ namenodeimage + ", namenoderequestcpu=" + namenoderequestcpu + ", namenoderequestmemory="
 				+ namenoderequestmemory + ", namenodelimitcpu=" + namenodelimitcpu + ", namenodelimitmemory="
-				+ namenodelimitmemory + ", datanodeimage=" + datanodeimage + ", datanoderequestcpu="
-				+ datanoderequestcpu + ", datanoderequestmemory=" + datanoderequestmemory + ", datanodelimitcpu="
-				+ datanodelimitcpu + ", datanodelimitmemory=" + datanodelimitmemory + "]";
+				+ namenodelimitmemory + ", namenodeport=" + namenodeport + ", namenodeportwebui=" + namenodeportwebui
+				+ ", datanodeimage=" + datanodeimage + ", datanoderequestcpu=" + datanoderequestcpu
+				+ ", datanoderequestmemory=" + datanoderequestmemory + ", datanodelimitcpu=" + datanodelimitcpu
+				+ ", datanodelimitmemory=" + datanodelimitmemory + ", datanodeport=" + datanodeport
+				+ ", datanodeportwebui=" + datanodeportwebui + ", datanodeportipc=" + datanodeportipc + "]";
 	}
-
+	
 }

@@ -9,9 +9,12 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAM
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEIMAGE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODELIMITCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODELIMITMEMORY_DEFAULT;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORT_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEREQUESTCPU_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEREQUESTMEMORY_DEFAULT;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURL;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEURLWEBUI;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODEPORTWEBUI_DEFAULT;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -69,7 +72,10 @@ public class NameNodeDaemonSetDependentResource
 		container.getResources().setLimits(limits);
 		container.getResources().setRequests(requests);
 		Node primaryNode = context.getClient().nodes().list().getItems().get(1);
-		container.getEnv().get(1).setValue(String.format(NAMENODEURL, primaryNode.getStatus().getAddresses().get(0).getAddress()));
+		container.getEnv().get(1).setValue(String.format(NAMENODEURL, primaryNode.getStatus().getAddresses().get(0).getAddress(),
+				nonNull(primary.getSpec().getNamenodeport())?primary.getSpec().getNamenodeport():NAMENODEPORT_DEFAULT));
+		container.getEnv().get(2).setValue(String.format(NAMENODEURLWEBUI, primaryNode.getStatus().getAddresses().get(0).getAddress(),
+				nonNull(primary.getSpec().getNamenodeportwebui())?primary.getSpec().getNamenodeportwebui():NAMENODEPORTWEBUI_DEFAULT));
 		return nameNodeDaemoneSet;
     }
     
