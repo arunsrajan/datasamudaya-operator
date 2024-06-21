@@ -22,10 +22,10 @@ public class DataNodeDaemonSetPrecondition implements Condition<DaemonSet, Datas
 		try {
 			DaemonSet nameNodeDaemonSet = context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace()).withName(primary.getMetadata().getName()+HYPHEN+NAMENODE).get();
 			boolean isready = nonNull(nameNodeDaemonSet) && nonNull(nameNodeDaemonSet.getStatus().getNumberAvailable()) && nameNodeDaemonSet.getStatus().getNumberAvailable() >= 1?true:false;
-			log.info("Zookeeper DaemonSet is ready: {}", isready);
+			log.info("Namenode DaemonSet is ready: {}", isready);
 			return isready;
 		} catch (Exception e) {
-			log.error("Error while checking Zookeeper DaemonSet:", e);
+			log.error("Error while checking Namenode DaemonSet:", e);
 		}
 		return false;
 	}

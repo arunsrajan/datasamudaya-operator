@@ -78,8 +78,8 @@ public class ContainerStatefulSetDependentResource
 		container.getEnv().get(4).setValue(primaryName+ZOOKEEPER+COLON+ZKPORT);
 		Map<String, String> nameNodeLabel = new HashMap<>();
 		nameNodeLabel.put(APPLICATION, primaryName+NAMENODE);
-		Pod primaryPod = context.getClient().pods().inNamespace(primary.getMetadata().getNamespace()).withLabels(nameNodeLabel).list().getItems().get(0);
-		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, primaryPod.getStatus().getHostIP()));
+		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
+		container.getEnv().get(container.getEnv().size()-1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP()));
 		return containerStatefulSet;
     }
     

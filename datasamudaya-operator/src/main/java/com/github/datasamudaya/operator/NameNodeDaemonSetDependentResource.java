@@ -68,7 +68,7 @@ public class NameNodeDaemonSetDependentResource
 		requests.put(MEMORY, nonNull(primary.getSpec().getNamenoderequestmemory())?Quantity.parse(primary.getSpec().getNamenoderequestmemory()):Quantity.parse(NAMENODEREQUESTMEMORY_DEFAULT));
 		container.getResources().setLimits(limits);
 		container.getResources().setRequests(requests);
-		Node primaryNode = context.getClient().nodes().list().getItems().get(0);
+		Node primaryNode = context.getClient().nodes().list().getItems().get(1);
 		container.getEnv().get(1).setValue(String.format(NAMENODEURL, primaryNode.getStatus().getAddresses().get(0).getAddress()));
 		return nameNodeDaemoneSet;
     }

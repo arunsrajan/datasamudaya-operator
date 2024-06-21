@@ -4,19 +4,24 @@ import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.HYP
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.SERVICE_MAP_EVENT_SOURCE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STANDALONE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.STATEFULSET_MAP_EVENT_SOURCE;
+import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.APPLICATION;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DAEMONSET_MAP_EVENT_SOURCE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.WORKER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.ZOOKEEPER;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.NAMENODE;
 import static com.github.datasamudaya.operator.DataSamudayaOperatorConstants.DATANODE;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.DaemonSet;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
@@ -44,10 +49,10 @@ import io.javaoperatorsdk.operator.processing.event.source.informer.InformerEven
 										useEventSourceWithName = STATEFULSET_MAP_EVENT_SOURCE),
 										@Dependent(type = StandaloneStatefulSetDependentResource.class,
 										useEventSourceWithName = STATEFULSET_MAP_EVENT_SOURCE,
-										reconcilePrecondition = ZookeeperStatefulSetPrecondition.class),
+										reconcilePrecondition = NameNodeDaemonSetStatefulSetPrecondition.class),
 										@Dependent(type = ContainerStatefulSetDependentResource.class,
 										useEventSourceWithName = STATEFULSET_MAP_EVENT_SOURCE,
-										reconcilePrecondition = ZookeeperStatefulSetPrecondition.class),
+										reconcilePrecondition = NameNodeDaemonSetStatefulSetPrecondition.class),
 										@Dependent(type = StandaloneServiceDependentResource.class,
 										useEventSourceWithName = SERVICE_MAP_EVENT_SOURCE),
 										@Dependent(type = ZookeeperServiceDependentResource.class,
@@ -59,13 +64,12 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
 														, Cleaner<DatasamudayaOperatorCustomResource>{
 
 	private static final Logger log = LoggerFactory.getLogger(DatasamudayaOperatorReconciler.class);
-	
+	ExecutorService threadPool = Executors.newFixedThreadPool(10);
     public UpdateControl<DatasamudayaOperatorCustomResource> reconcile(DatasamudayaOperatorCustomResource primary,
                                                      Context<DatasamudayaOperatorCustomResource> context) {
     	log.info("The Resource To be Reconciled: {}", primary);
     	
-    	Optional<Set<Service>> previousService = Optional.ofNullable(context.getSecondaryResources(Service.class));
-    	
+    	Optional<Set<Service>> previousService = Optional.ofNullable(context.getSecondaryResources(Service.class));    	
     	boolean isServiceCreated = false;
 		boolean isStatefulSetCreated = false;
     	boolean isServiceUpdated = false;
@@ -93,12 +97,17 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
     	Optional<Set<DaemonSet>> previousDaemonSets = Optional.ofNullable(context.getSecondaryResources(DaemonSet.class));
     	
     	if(previousDaemonSets.isEmpty() || previousDaemonSets.get().isEmpty()) {
-    		NameNodeDaemonSetDependentResource nndsdr = new NameNodeDaemonSetDependentResource();
-        	context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace()).resource(nndsdr.desired(primary, context))
-        	.createOr(Replaceable::update);
-        	DataNodeDaemonSetDependentResource dndsdr = new DataNodeDaemonSetDependentResource();
-        	context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace()).resource(dndsdr.desired(primary, context))
-        	.createOr(Replaceable::update);
+    		threadPool.execute(() -> {
+	    		NameNodeDaemonSetDependentResource nndsdr = new NameNodeDaemonSetDependentResource();
+	        	context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace()).resource(nndsdr.desired(primary, context))
+	        	.createOr(Replaceable::update);
+	        	log.info("NameNode Created With Resource: {}", primary);
+    		});    		
+    		threadPool.execute(() -> {    			
+	        	DataNodeDaemonSetDependentResource dndsdr = new DataNodeDaemonSetDependentResource();
+	        	context.getClient().apps().daemonSets().inNamespace(primary.getMetadata().getNamespace()).resource(dndsdr.desired(primary, context))
+	        	.createOr(Replaceable::update);
+    		});
         	isDaemonSetCreated = true;
         	log.info("DaemonSet Created: {}", primary);
     	} else {
@@ -108,15 +117,21 @@ public class DatasamudayaOperatorReconciler implements Reconciler<DatasamudayaOp
     	
     	Optional<Set<StatefulSet>> previousStatefulSet = Optional.ofNullable(context.getSecondaryResources(StatefulSet.class));
     	if(previousStatefulSet.isEmpty() || previousStatefulSet.get().isEmpty()) {
-    		ZookeeperStatefulSetDependentResource zksdr = new ZookeeperStatefulSetDependentResource();
-        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(zksdr.desired(primary, context))
-        	.createOr(Replaceable::update);
-        	StandaloneStatefulSetDependentResource sasdr = new StandaloneStatefulSetDependentResource();
-        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(sasdr.desired(primary, context))
-        	.createOr(Replaceable::update);
-        	ContainerStatefulSetDependentResource csdr = new ContainerStatefulSetDependentResource();
-        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(csdr.desired(primary, context))
-        	.createOr(Replaceable::update);   
+    		threadPool.execute(() -> {
+	    		ZookeeperStatefulSetDependentResource zksdr = new ZookeeperStatefulSetDependentResource();
+	        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(zksdr.desired(primary, context))
+	        	.createOr(Replaceable::update);
+    		});
+    		threadPool.execute(() -> {    			
+	        	StandaloneStatefulSetDependentResource sasdr = new StandaloneStatefulSetDependentResource();
+	        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(sasdr.desired(primary, context))
+	        	.createOr(Replaceable::update);
+    		});
+    		threadPool.execute(() -> {    			
+	        	ContainerStatefulSetDependentResource csdr = new ContainerStatefulSetDependentResource();
+	        	context.getClient().apps().statefulSets().inNamespace(primary.getMetadata().getNamespace()).resource(csdr.desired(primary, context))
+	        	.createOr(Replaceable::update);
+    		});
         	isStatefulSetCreated = true;
         	log.info("StatefulSet Created: {}", primary);
     	} else {

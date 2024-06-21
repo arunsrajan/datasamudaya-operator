@@ -18,6 +18,7 @@ import static java.util.Objects.nonNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -71,8 +72,8 @@ public class DataNodeDaemonSetDependentResource
 		container.getResources().setRequests(requests);
 		Map<String, String> nameNodeLabel = new HashMap<>();
 		nameNodeLabel.put(APPLICATION, primaryName+NAMENODE);
-		Pod primaryPod = context.getClient().pods().inNamespace(primary.getMetadata().getNamespace()).withLabels(nameNodeLabel).list().getItems().get(0);
-		container.getEnv().get(1).setValue(String.format(NAMENODEURL, primaryPod.getStatus().getPodIP()));
+		Pod pod = Utils.waitUntilPodIsUp(context, primary, nameNodeLabel);
+		container.getEnv().get(1).setValue(String.format(NAMENODEURL, pod.getStatus().getPodIP()));
 		return dataNodeDaemoneSet;
     }
     
