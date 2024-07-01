@@ -71,6 +71,31 @@ rules:
   - ""
   resources:
   - services
+  - pods
+  - nodes
+  verbs: ["create","delete","deletecollection","get","list","patch","update","watch"]
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs: ["create","delete","deletecollection","get","list","patch","update","watch"]
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs: ["create","delete","deletecollection","get","list","patch","update","watch"]
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  verbs: ["create","delete","deletecollection","get","list","patch","update","watch"]
+- apiGroups:
+  - apps
+  resources:
+  - deployments
   verbs: ["create","delete","deletecollection","get","list","patch","update","watch"]
 - apiGroups:
   - apps
